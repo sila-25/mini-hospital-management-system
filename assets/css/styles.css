@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | VeeCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/tailwind.css">
+</head>
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- sidebar content -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <div class="top-navbar">
+                <div class="navbar-left">
+                    <div class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+                    <div class="page-title">
+                        <h1>Dashboard</h1>
+                        <p>Welcome back, Dr. Silas Misaro!</p>
+                    </div>
+                </div>
+                <div class="navbar-right">
+                    <div class="user-profile">
+                        <div class="user-profile-avatar">S</div>
+                        <div class="user-profile-info">
+                            <div class="user-profile-name">Dr. Silas Misaro</div>
+                            <div class="user-profile-role">Doctor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h4>Total Patients</h4>
+                        <div class="stat-value">1,248</div>
+                        <div class="stat-trend stat-trend-up">
+                            <i class="fas fa-arrow-up"></i> +12% this month
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                </div>
+                <!-- Add more stat cards -->
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-week"></i> Upcoming Appointments</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- table content -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sidebar toggle
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-collapsed');
+            document.querySelector('.main-content').classList.toggle('main-content-expanded');
+        });
+    </script>
+</body>
+</html>

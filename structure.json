@@ -1,0 +1,90 @@
+{
+    "appointments": {
+        "files": [
+            "add_appointment.php",
+            "calendar.php",
+            "cancel_appointment.php",
+            "view_appointments.php"
+        ]
+    },
+    "assets": {
+        "css": {
+            "files": [
+                "styles.css"
+            ]
+        },
+        "images": {},
+        "js": {
+            "files": [
+                "scripts.js"
+            ]
+        }
+    },
+    "billing": {
+        "files": [
+            "invoices.php",
+            "payments.php",
+            "receipts.php"
+        ]
+    },
+    "config": {
+        "files": [
+            "database.php"
+        ]
+    },
+    "files": [
+        "dashboard.php",
+        "index.php",
+        "login.php",
+        "logout.php",
+        "register.php",
+        "vee.sql"
+    ],
+    "includes": {
+        "files": [
+            "auth.php",
+            "footer.php",
+            "header.php",
+            "sidebar.php"
+        ]
+    },
+    "patients": {
+        "files": [
+            "add_patient.php",
+            "delete_patient.php",
+            "diagnosos.php",
+            "edit_patient.php",
+            "patient_profile.php",
+            "view_patients.php"
+        ]
+    },
+    "prescriptions": {
+        "files": [
+            "add_prescription.php",
+            "get_prescription_details.php",
+            "print_prescription.php",
+            "view_prescriptions.php"
+        ]
+    },
+    "reports": {
+        "files": [
+            "daily_reports.php",
+            "financial_reports.php",
+            "patient_reports.php"
+        ]
+    },
+    "settings": {
+        "files": [
+            "clinic_settings.php",
+            "profile.php",
+            "users.php"
+        ]
+    },
+    "treatments": {
+        "files": [
+            "diagnosis.php",
+            "notes.php",
+            "procedures.php"
+        ]
+    }
+}
