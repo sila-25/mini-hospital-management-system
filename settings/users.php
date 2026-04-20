@@ -53,250 +53,108 @@ include '../includes/header.php';
 include '../includes/sidebar.php';
 ?>
 
-<main class="main-content">
-    <div class="page-header">
-        <div>
-            <h1>User Management</h1>
-            <p>Manage system users and roles</p>
+<main class="main-content" style="margin-left: 280px; padding: 24px; background: #f5f7fa; min-height: 100vh;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="background: white; border-radius: 20px; padding: 20px 28px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div>
+                <h1 style="margin: 0; font-size: 24px;">User Management</h1>
+                <p style="margin: 4px 0 0; color: #6c86a3;">Manage system users and roles</p>
+            </div>
+            <button onclick="openModal('addModal')" style="background: #0A84FF; color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer;"><i class="fas fa-user-plus"></i> Add New User</button>
         </div>
-        <button onclick="openModal('addModal')" class="btn-primary"><i class="fas fa-user-plus"></i> Add New User</button>
-    </div>
 
-    <?php if ($message): ?>
-        <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
-    <?php elseif ($error): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
+        <?php if ($message): ?>
+            <div style="background: #d4edda; color: #155724; padding: 14px 20px; border-radius: 12px; margin-bottom: 24px; border-left: 4px solid #28a745;"><?php echo htmlspecialchars($message); ?></div>
+        <?php elseif ($error): ?>
+            <div style="background: #f8d7da; color: #721c24; padding: 14px 20px; border-radius: 12px; margin-bottom: 24px; border-left: 4px solid #dc3545;"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
 
-    <div class="users-table-container">
-        <table class="users-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($users as $u): ?>
-                <tr>
-                    <td><strong><?php echo htmlspecialchars($u['full_name']); ?></strong></td>
-                    <td><?php echo htmlspecialchars($u['email']); ?></td>
-                    <td><span class="role-badge role-<?php echo $u['role']; ?>"><?php echo ucfirst($u['role']); ?></span></td>
-                    <td><?php echo $u['is_active'] ? 'Active' : 'Inactive'; ?></td>
-                    <td>
-                        <button onclick="editUser(<?php echo $u['id']; ?>, '<?php echo addslashes($u['full_name']); ?>', '<?php echo addslashes($u['email']); ?>', '<?php echo $u['role']; ?>')" class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
-                        <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this user?')">
-                            <input type="hidden" name="user_id" value="<?php echo $u['id']; ?>">
-                            <button type="submit" name="delete_user" class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div style="background: white; border-radius: 20px; padding: 20px; overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 14px; border-bottom: 1px solid #eef2f6;">Name</th>
+                        <th style="text-align: left; padding: 14px; border-bottom: 1px solid #eef2f6;">Email</th>
+                        <th style="text-align: left; padding: 14px; border-bottom: 1px solid #eef2f6;">Role</th>
+                        <th style="text-align: left; padding: 14px; border-bottom: 1px solid #eef2f6;">Status</th>
+                        <th style="text-align: left; padding: 14px; border-bottom: 1px solid #eef2f6;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($users as $u): ?>
+                    <tr>
+                        <td style="padding: 14px; border-bottom: 1px solid #eef2f6;"><strong><?php echo htmlspecialchars($u['full_name']); ?></strong></td>
+                        <td style="padding: 14px; border-bottom: 1px solid #eef2f6;"><?php echo htmlspecialchars($u['email']); ?></td>
+                        <td style="padding: 14px; border-bottom: 1px solid #eef2f6;"><span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: <?php echo $u['role']=='admin'?'#dc3545':($u['role']=='doctor'?'#0A84FF':'#28a745'); ?>; color: white;"><?php echo ucfirst($u['role']); ?></span></td>
+                        <td style="padding: 14px; border-bottom: 1px solid #eef2f6;"><?php echo $u['is_active'] ? 'Active' : 'Inactive'; ?></td>
+                        <td style="padding: 14px; border-bottom: 1px solid #eef2f6;">
+                            <button onclick="editUser(<?php echo $u['id']; ?>, '<?php echo addslashes($u['full_name']); ?>', '<?php echo addslashes($u['email']); ?>', '<?php echo $u['role']; ?>')" style="background: none; border: none; cursor: pointer; margin-right: 12px;"><i class="fas fa-edit" style="color: #FF9500;"></i></button>
+                            <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this user?')">
+                                <input type="hidden" name="user_id" value="<?php echo $u['id']; ?>">
+                                <button type="submit" name="delete_user" style="background: none; border: none; cursor: pointer;"><i class="fas fa-trash" style="color: #dc3545;"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </main>
 
-<!-- Modals (same as before) -->
-<div id="addModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Add New User</h2>
-            <button class="close-modal" onclick="closeModal('addModal')">&times;</button>
+<!-- Add User Modal -->
+<div id="addModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 24px; max-width: 500px; width: 90%; padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0; font-size: 20px;">Add New User</h2>
+            <button onclick="closeModal('addModal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
         </div>
         <form method="POST">
-            <div class="form-group"><label>Full Name</label><input type="text" name="full_name" required></div>
-            <div class="form-group"><label>Email</label><input type="email" name="email" required></div>
-            <div class="form-group"><label>Password</label><input type="password" name="password" required></div>
-            <div class="form-group"><label>Role</label>
-                <select name="role">
+            <div style="margin-bottom: 16px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Full Name</label><input type="text" name="full_name" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;"></div>
+            <div style="margin-bottom: 16px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Email</label><input type="email" name="email" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;"></div>
+            <div style="margin-bottom: 16px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Password</label><input type="password" name="password" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;"></div>
+            <div style="margin-bottom: 20px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Role</label>
+                <select name="role" style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;">
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
                     <option value="staff">Staff</option>
                     <option value="receptionist">Receptionist</option>
                 </select>
             </div>
-            <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="closeModal('addModal')">Cancel</button>
-                <button type="submit" name="add_user" class="btn-primary">Add User</button>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" onclick="closeModal('addModal')" style="background: #f0f2f5; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer;">Cancel</button>
+                <button type="submit" name="add_user" style="background: #0A84FF; color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer;">Add User</button>
             </div>
         </form>
     </div>
 </div>
 
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Edit User</h2>
-            <button class="close-modal" onclick="closeModal('editModal')">&times;</button>
+<!-- Edit User Modal -->
+<div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 24px; max-width: 500px; width: 90%; padding: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0; font-size: 20px;">Edit User</h2>
+            <button onclick="closeModal('editModal')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #999;">&times;</button>
         </div>
         <form method="POST">
             <input type="hidden" name="user_id" id="edit_user_id">
-            <div class="form-group"><label>Full Name</label><input type="text" name="full_name" id="edit_full_name" required></div>
-            <div class="form-group"><label>Email</label><input type="email" name="email" id="edit_email" required></div>
-            <div class="form-group"><label>Role</label>
-                <select name="role" id="edit_role">
+            <div style="margin-bottom: 16px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Full Name</label><input type="text" name="full_name" id="edit_full_name" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;"></div>
+            <div style="margin-bottom: 16px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Email</label><input type="email" name="email" id="edit_email" required style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;"></div>
+            <div style="margin-bottom: 20px;"><label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Role</label>
+                <select name="role" id="edit_role" style="width:100%; padding: 10px; border:1px solid #ddd; border-radius: 10px;">
                     <option value="admin">Admin</option>
                     <option value="doctor">Doctor</option>
                     <option value="staff">Staff</option>
                     <option value="receptionist">Receptionist</option>
                 </select>
             </div>
-            <div class="form-actions">
-                <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Cancel</button>
-                <button type="submit" name="edit_user" class="btn-primary">Save Changes</button>
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" onclick="closeModal('editModal')" style="background: #f0f2f5; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer;">Cancel</button>
+                <button type="submit" name="edit_user" style="background: #0A84FF; color: white; border: none; padding: 10px 20px; border-radius: 12px; cursor: pointer;">Save Changes</button>
             </div>
         </form>
     </div>
 </div>
-
-<style>
-.users-table-container {
-    background: white;
-    border-radius: 20px;
-    padding: 20px;
-    overflow-x: auto;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-.users-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.users-table th {
-    text-align: left;
-    padding: 14px;
-    border-bottom: 1px solid #eef2f6;
-    color: #6c86a3;
-    font-weight: 600;
-    font-size: 12px;
-}
-.users-table td {
-    padding: 14px;
-    border-bottom: 1px solid #eef2f6;
-}
-.role-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-.role-admin { background: #dc3545; color: white; }
-.role-doctor { background: #0A84FF; color: white; }
-.role-staff { background: #28a745; color: white; }
-.role-receptionist { background: #FF9500; color: white; }
-.btn-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 0 4px;
-}
-.btn-edit { color: #FF9500; }
-.btn-edit:hover { color: #cc7a00; }
-.btn-delete { color: #dc3545; }
-.btn-delete:hover { color: #a71d2a; }
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-}
-.modal-content {
-    background: white;
-    border-radius: 24px;
-    max-width: 500px;
-    width: 90%;
-    padding: 24px;
-}
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-.modal-header h2 {
-    margin: 0;
-    font-size: 20px;
-}
-.close-modal {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #999;
-}
-.form-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-.btn-secondary {
-    background: #f0f2f5;
-    color: #4a627a;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-}
-.page-header {
-    background: white;
-    border-radius: 20px;
-    padding: 20px 28px;
-    margin-bottom: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-.page-header h1 {
-    margin: 0;
-    font-size: 24px;
-}
-.page-header p {
-    margin: 4px 0 0;
-    color: #6c86a3;
-}
-.btn-primary {
-    background: #0A84FF;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 500;
-}
-.btn-primary:hover {
-    background: #006EDB;
-}
-.alert {
-    padding: 14px 20px;
-    border-radius: 12px;
-    margin-bottom: 24px;
-}
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border-left: 4px solid #28a745;
-}
-.alert-danger {
-    background: #f8d7da;
-    color: #721c24;
-    border-left: 4px solid #dc3545;
-}
-</style>
 
 <script>
 function openModal(id) { document.getElementById(id).style.display = 'flex'; }
