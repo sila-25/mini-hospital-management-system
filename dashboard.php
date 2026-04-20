@@ -10,6 +10,13 @@ $conn = getConnection();
 $user_name = $_SESSION['user_name'] ?? 'Staff';
 $user_role = $_SESSION['user_role'] ?? '';
 
+// Get clinic name for footer
+$clinic_footer_name = 'VeeCare Medical Centre';
+$result = $conn->query("SELECT setting_value FROM clinic_settings WHERE setting_key = 'clinic_name'");
+if ($result && $row = $result->fetch_assoc()) {
+    $clinic_footer_name = $row['setting_value'];
+}
+
 // Get currency symbol from database
 $currency_symbol = 'KSh';
 $result = $conn->query("SELECT setting_value FROM clinic_settings WHERE setting_key = 'currency_symbol'");
@@ -90,11 +97,18 @@ include 'includes/sidebar.php';
         font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     }
     
-    .dashboard-wrapper {
+    /* Fix sidebar and main content overlap */
+    .main-content {
         margin-left: 280px;
-        padding: 28px 32px;
+        padding: 0;
         background: linear-gradient(135deg, #f5f7fa 0%, #eef2f8 100%);
         min-height: 100vh;
+    }
+    
+    .dashboard-wrapper {
+        padding: 28px 32px;
+        max-width: 100%;
+        overflow-x: hidden;
     }
     
     /* Header Section */
@@ -182,7 +196,7 @@ include 'includes/sidebar.php';
         box-shadow: 0 6px 16px rgba(255,59,48,0.3);
     }
 
-    /* Stats Grid */
+    /* Stats Grid - Responsive */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -258,7 +272,7 @@ include 'includes/sidebar.php';
     .stat-card:nth-child(3) .stat-icon i { color: #34C759; }
     .stat-card:nth-child(4) .stat-icon i { color: #FF9500; }
 
-    /* Content Grid */
+    /* Content Grid - Responsive */
     .content-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -310,7 +324,7 @@ include 'includes/sidebar.php';
     }
     .card-body { padding: 20px 24px; }
 
-    /* Tables */
+    /* Tables - Responsive */
     .data-table {
         width: 100%;
         border-collapse: collapse;
@@ -376,7 +390,7 @@ include 'includes/sidebar.php';
     }
     .action-btn i { width: 28px; font-size: 18px; }
 
-    /* Footer */
+    /* Footer - Dynamic clinic name */
     .dashboard-footer {
         text-align: center;
         padding-top: 28px;
@@ -384,175 +398,247 @@ include 'includes/sidebar.php';
         font-size: 12px;
         font-weight: 500;
         color: #8E8E93;
+        margin-top: 20px;
     }
 
+    /* Responsive Breakpoints */
     @media (max-width: 1200px) {
-        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .stats-grid { 
+            grid-template-columns: repeat(2, 1fr); 
+        }
     }
+    
+    @media (max-width: 1024px) {
+        .main-content {
+            margin-left: 0;
+        }
+        .dashboard-wrapper {
+            padding: 20px;
+        }
+    }
+    
     @media (max-width: 768px) {
-        .dashboard-wrapper { margin-left: 0; padding: 20px; }
-        .stats-grid { grid-template-columns: 1fr; }
-        .content-grid { grid-template-columns: 1fr; }
-        .dashboard-header { flex-direction: column; text-align: center; }
-        .user-card { justify-content: center; }
+        .dashboard-wrapper { 
+            padding: 16px; 
+        }
+        .stats-grid { 
+            grid-template-columns: 1fr; 
+            gap: 16px;
+        }
+        .content-grid { 
+            grid-template-columns: 1fr; 
+            gap: 20px;
+        }
+        .dashboard-header { 
+            flex-direction: column; 
+            text-align: center; 
+            padding: 16px 20px;
+        }
+        .user-card { 
+            justify-content: center; 
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            padding: 16px;
+        }
+        .stat-number {
+            font-size: 28px;
+        }
+        .card-header {
+            padding: 14px 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-body {
+            padding: 16px 18px;
+            overflow-x: auto;
+        }
+        .data-table {
+            min-width: 500px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .dashboard-wrapper {
+            padding: 12px;
+        }
+        .user-avatar-lg {
+            width: 40px;
+            height: 40px;
+            font-size: 14px;
+        }
+        .logout-link {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+        .welcome h1 {
+            font-size: 22px;
+        }
     }
 </style>
 
-<div class="dashboard-wrapper">
-    <!-- Header -->
-    <div class="dashboard-header">
-        <div class="welcome">
-            <h1>✨ Dashboard</h1>
-            <p>Welcome back, <?php echo htmlspecialchars($user_name); ?>!</p>
-        </div>
-        <div class="user-card">
-            <div class="user-details">
-                <div class="user-name-lg"><?php echo htmlspecialchars($user_name); ?></div>
-                <div class="user-role-lg"><?php echo ucfirst(htmlspecialchars($user_role)); ?></div>
+<div class="main-content">
+    <div class="dashboard-wrapper">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="welcome">
+                <h1>✨ Dashboard</h1>
+                <p>Welcome back, <?php echo htmlspecialchars($user_name); ?>!</p>
             </div>
-            <div class="user-avatar-lg"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
-            <a href="logout.php" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-    </div>
-
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-info">
-                <h3>Total Patients</h3>
-                <div class="stat-number"><?php echo number_format($total_patients); ?></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +12% this month</div>
-            </div>
-            <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-info">
-                <h3>Today's Appointments</h3>
-                <div class="stat-number"><?php echo $today_appointments; ?></div>
-                <div class="stat-trend"><i class="fas fa-clock"></i> Scheduled today</div>
-            </div>
-            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-info">
-                <h3>Monthly Revenue</h3>
-                <div class="stat-number" style="color:#34C759;"><?php echo formatCurrency($monthly_revenue, $currency_symbol); ?></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +8% vs last month</div>
-            </div>
-            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-info">
-                <h3>Pending Tasks</h3>
-                <div class="stat-number"><?php echo $pending_tasks; ?></div>
-                <div class="stat-trend"><i class="fas fa-tasks"></i> Awaiting action</div>
-            </div>
-            <div class="stat-icon"><i class="fas fa-clock"></i></div>
-        </div>
-    </div>
-
-    <!-- Content Grid -->
-    <div class="content-grid">
-        <!-- Upcoming Appointments -->
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fas fa-calendar-week" style="color:#0A84FF;"></i> Upcoming Appointments</h3>
-                <a href="appointments/calendar.php">View all →</a>
-            </div>
-            <div class="card-body">
-                <?php if (empty($upcoming_appointments)): ?>
-                    <div class="empty-state"><i class="fas fa-calendar-alt"></i><p>No upcoming appointments</p></div>
-                <?php else: ?>
-                    <table class="data-table">
-                        <thead><tr><th>Patient</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
-                        <tbody>
-                            <?php foreach ($upcoming_appointments as $apt): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($apt['patient_name']); ?></td>
-                                <td><?php echo date('M d, Y', strtotime($apt['appointment_date'])); ?></td>
-                                <td><?php echo htmlspecialchars($apt['appointment_time']); ?></td>
-                                <td><span class="badge badge-scheduled">Scheduled</span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
+            <div class="user-card">
+                <div class="user-details">
+                    <div class="user-name-lg"><?php echo htmlspecialchars($user_name); ?></div>
+                    <div class="user-role-lg"><?php echo ucfirst(htmlspecialchars($user_role)); ?></div>
+                </div>
+                <div class="user-avatar-lg"><?php echo strtoupper(substr($user_name, 0, 1)); ?></div>
+                <a href="logout.php" class="logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
 
-        <!-- Recent Patients -->
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fas fa-user-plus" style="color:#34C759;"></i> Recent Patients</h3>
-                <a href="patients/view_patients.php">View all →</a>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Total Patients</h3>
+                    <div class="stat-number"><?php echo number_format($total_patients); ?></div>
+                    <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +12% this month</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
             </div>
-            <div class="card-body">
-                <?php if (empty($recent_patients)): ?>
-                    <div class="empty-state"><i class="fas fa-users"></i><p>No patients registered</p></div>
-                <?php else: ?>
-                    <table class="data-table">
-                        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th></tr></thead>
-                        <tbody>
-                            <?php foreach ($recent_patients as $patient): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($patient['full_name']); ?></td>
-                                <td><?php echo htmlspecialchars($patient['email']); ?></td>
-                                <td><?php echo htmlspecialchars($patient['phone'] ?? 'N/A'); ?></td>
-                                <td><?php echo date('M d', strtotime($patient['created_at'])); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Today's Appointments</h3>
+                    <div class="stat-number"><?php echo $today_appointments; ?></div>
+                    <div class="stat-trend"><i class="fas fa-clock"></i> Scheduled today</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
             </div>
-        </div>
-
-        <!-- Recent Appointments -->
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fas fa-history" style="color:#FF9500;"></i> Recent Appointments</h3>
-                <a href="appointments/view_appointments.php">View all →</a>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Monthly Revenue</h3>
+                    <div class="stat-number" style="color:#34C759;"><?php echo formatCurrency($monthly_revenue, $currency_symbol); ?></div>
+                    <div class="stat-trend up"><i class="fas fa-arrow-up"></i> +8% vs last month</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
             </div>
-            <div class="card-body">
-                <?php if (empty($recent_appointments)): ?>
-                    <div class="empty-state"><i class="fas fa-calendar-check"></i><p>No appointment history</p></div>
-                <?php else: ?>
-                    <table class="data-table">
-                        <thead><tr><th>Patient</th><th>Date</th><th>Status</th></tr></thead>
-                        <tbody>
-                            <?php foreach ($recent_appointments as $apt): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($apt['patient_name']); ?></td>
-                                <td><?php echo date('M d, Y', strtotime($apt['appointment_date'])); ?></td>
-                                <td><span class="badge badge-<?php echo strtolower($apt['status']); ?>"><?php echo ucfirst($apt['status']); ?></span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php endif; ?>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <h3>Pending Tasks</h3>
+                    <div class="stat-number"><?php echo $pending_tasks; ?></div>
+                    <div class="stat-trend"><i class="fas fa-tasks"></i> Awaiting action</div>
+                </div>
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="card">
-            <div class="card-header">
-                <h3><i class="fas fa-bolt" style="color:#AF52DE;"></i> Quick Actions</h3>
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Upcoming Appointments -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-calendar-week" style="color:#0A84FF;"></i> Upcoming Appointments</h3>
+                    <a href="appointments/calendar.php">View all →</a>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($upcoming_appointments)): ?>
+                        <div class="empty-state"><i class="fas fa-calendar-alt"></i><p>No upcoming appointments</p></div>
+                    <?php else: ?>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead><tr><th>Patient</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    <?php foreach ($upcoming_appointments as $apt): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($apt['patient_name']); ?></td>
+                                        <td><?php echo date('M d, Y', strtotime($apt['appointment_date'])); ?></td>
+                                        <td><?php echo htmlspecialchars($apt['appointment_time']); ?></td>
+                                        <td><span class="badge badge-scheduled">Scheduled</span></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="quick-actions">
-                    <a href="patients/add_patient.php" class="action-btn"><i class="fas fa-user-plus" style="color:#34C759;"></i><span>Register New Patient</span></a>
-                    <a href="appointments/add_appointment.php" class="action-btn"><i class="fas fa-calendar-plus" style="color:#0A84FF;"></i><span>Schedule Appointment</span></a>
-                    <a href="prescriptions/add_prescription.php" class="action-btn"><i class="fas fa-prescription" style="color:#FF9500;"></i><span>Create Prescription</span></a>
-                    <a href="billing/invoices.php" class="action-btn"><i class="fas fa-receipt" style="color:#34C759;"></i><span>Generate Invoice</span></a>
+
+            <!-- Recent Patients -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user-plus" style="color:#34C759;"></i> Recent Patients</h3>
+                    <a href="patients/view_patients.php">View all →</a>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($recent_patients)): ?>
+                        <div class="empty-state"><i class="fas fa-users"></i><p>No patients registered</p></div>
+                    <?php else: ?>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th></tr></thead>
+                                <tbody>
+                                    <?php foreach ($recent_patients as $patient): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($patient['full_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($patient['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($patient['phone'] ?? 'N/A'); ?></td>
+                                        <td><?php echo date('M d', strtotime($patient['created_at'])); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Recent Appointments -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-history" style="color:#FF9500;"></i> Recent Appointments</h3>
+                    <a href="appointments/view_appointments.php">View all →</a>
+                </div>
+                <div class="card-body">
+                    <?php if (empty($recent_appointments)): ?>
+                        <div class="empty-state"><i class="fas fa-calendar-check"></i><p>No appointment history</p></div>
+                    <?php else: ?>
+                        <div style="overflow-x: auto;">
+                            <table class="data-table">
+                                <thead><tr><th>Patient</th><th>Date</th><th>Status</th></tr></thead>
+                                <tbody>
+                                    <?php foreach ($recent_appointments as $apt): ?>
+                                    <td>
+                                        <td><?php echo htmlspecialchars($apt['patient_name']); ?></td>
+                                        <td><?php echo date('M d, Y', strtotime($apt['appointment_date'])); ?></td>
+                                        <td><span class="badge badge-<?php echo strtolower($apt['status']); ?>"><?php echo ucfirst($apt['status']); ?></span></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-bolt" style="color:#AF52DE;"></i> Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="quick-actions">
+                        <a href="patients/add_patient.php" class="action-btn"><i class="fas fa-user-plus" style="color:#34C759;"></i><span>Register New Patient</span></a>
+                        <a href="appointments/add_appointment.php" class="action-btn"><i class="fas fa-calendar-plus" style="color:#0A84FF;"></i><span>Schedule Appointment</span></a>
+                        <a href="prescriptions/add_prescription.php" class="action-btn"><i class="fas fa-prescription" style="color:#FF9500;"></i><span>Create Prescription</span></a>
+                        <a href="billing/invoices.php" class="action-btn"><i class="fas fa-receipt" style="color:#34C759;"></i><span>Generate Invoice</span></a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Footer -->
-    <div class="dashboard-footer">
-        <p>© <?php echo date('Y'); ?> VeeCare Medical Centre. All rights reserved. | Version 3.0</p>
+        <!-- Footer with dynamic clinic name -->
+        <div class="dashboard-footer">
+            <p>© <?php echo date('Y'); ?> <?php echo htmlspecialchars($clinic_footer_name); ?>. All rights reserved. | Version 3.0</p>
+        </div>
     </div>
 </div>
 
-<?php include 'includes/footer.php'; ?>

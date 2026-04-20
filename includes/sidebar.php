@@ -1,7 +1,6 @@
 <?php
 // =============================================
 // SET YOUR PROJECT BASE URL HERE
-// Change this if your folder name is different
 // =============================================
 $base_url = '/veecare_medical_centre/';
 
@@ -11,6 +10,20 @@ $current_dir_name = basename(dirname($_SERVER['PHP_SELF']));
 $user_name = $_SESSION['user_name'] ?? 'User';
 $user_role = $_SESSION['user_role'] ?? '';
 $user_avatar = strtoupper(substr($user_name, 0, 1));
+
+// Get clinic name from database
+$clinic_display_name = 'VeeCare';
+$clinic_sub_name = 'Medical Centre';
+require_once __DIR__ . '/../config/database.php';
+$conn = getConnection();
+$result = $conn->query("SELECT setting_value FROM clinic_settings WHERE setting_key = 'clinic_name'");
+if ($result && $row = $result->fetch_assoc()) {
+    $clinic_display_name = $row['setting_value'];
+    // Extract short name for logo (first word)
+    $clinic_short = explode(' ', $clinic_display_name)[0];
+} else {
+    $clinic_short = 'VeeCare';
+}
 ?>
 <aside class="sidebar">
     <!-- Logo Section -->
@@ -19,8 +32,8 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <i class="fas fa-heartbeat"></i>
         </div>
         <div class="logo-text">
-            <span class="clinic-name">VeeCare</span>
-            <span class="clinic-sub">Medical Centre</span>
+            <span class="clinic-name"><?php echo htmlspecialchars($clinic_short); ?></span>
+            <span class="clinic-sub"><?php echo htmlspecialchars($clinic_sub_name); ?></span>
         </div>
     </div>
 
@@ -31,7 +44,7 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <div class="user-name"><?php echo htmlspecialchars($user_name); ?></div>
             <div class="user-role"><?php echo ucfirst(htmlspecialchars($user_role)); ?></div>
         </div>
-        <a href="<?php echo $base_url; ?>logout.php" class="logout-icon"><i class="fas fa-sign-out-alt"></i></a>
+        <a href="<?php echo $base_url; ?>logout.php" class="logout-icon" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
     </div>
 
     <!-- Navigation Menu -->
@@ -40,7 +53,8 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <!-- Dashboard -->
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>">
-                    <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -49,12 +63,14 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <li class="nav-category">Patients</li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>patients/view_patients.php" class="nav-link">
-                    <i class="fas fa-users"></i> <span>All Patients</span>
+                    <i class="fas fa-users"></i>
+                    <span>All Patients</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>patients/add_patient.php" class="nav-link">
-                    <i class="fas fa-user-plus"></i> <span>Add Patient</span>
+                    <i class="fas fa-user-plus"></i>
+                    <span>Add Patient</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -63,17 +79,20 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <li class="nav-category">Appointments</li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>appointments/calendar.php" class="nav-link">
-                    <i class="fas fa-calendar-alt"></i> <span>Calendar</span>
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Calendar</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>appointments/add_appointment.php" class="nav-link">
-                    <i class="fas fa-calendar-plus"></i> <span>Schedule</span>
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Schedule</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>appointments/view_appointments.php" class="nav-link">
-                    <i class="fas fa-list"></i> <span>All Appointments</span>
+                    <i class="fas fa-list"></i>
+                    <span>All Appointments</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -82,22 +101,26 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <li class="nav-category">Clinical</li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>prescriptions/view_prescriptions.php" class="nav-link">
-                    <i class="fas fa-prescription-bottle"></i> <span>Prescriptions</span>
+                    <i class="fas fa-prescription-bottle"></i>
+                    <span>Prescriptions</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>treatments/diagnosis.php" class="nav-link">
-                    <i class="fas fa-notes-medical"></i> <span>Diagnosis</span>
+                    <i class="fas fa-notes-medical"></i>
+                    <span>Diagnosis</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>treatments/procedures.php" class="nav-link">
-                    <i class="fas fa-syringe"></i> <span>Procedures</span>
+                    <i class="fas fa-syringe"></i>
+                    <span>Procedures</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>treatments/notes.php" class="nav-link">
-                    <i class="fas fa-file-alt"></i> <span>Clinical Notes</span>
+                    <i class="fas fa-file-alt"></i>
+                    <span>Clinical Notes</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -106,17 +129,20 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <li class="nav-category">Billing</li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>billing/invoices.php" class="nav-link">
-                    <i class="fas fa-file-invoice-dollar"></i> <span>Invoices</span>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Invoices</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>billing/payments.php" class="nav-link">
-                    <i class="fas fa-credit-card"></i> <span>Payments</span>
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payments</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>billing/receipts.php" class="nav-link">
-                    <i class="fas fa-receipt"></i> <span>Receipts</span>
+                    <i class="fas fa-receipt"></i>
+                    <span>Receipts</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -125,17 +151,20 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <li class="nav-category">Reports</li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>reports/daily_reports.php" class="nav-link">
-                    <i class="fas fa-chart-line"></i> <span>Daily Report</span>
+                    <i class="fas fa-chart-line"></i>
+                    <span>Daily Report</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>reports/patient_reports.php" class="nav-link">
-                    <i class="fas fa-users"></i> <span>Patient Report</span>
+                    <i class="fas fa-users"></i>
+                    <span>Patient Report</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>reports/financial_reports.php" class="nav-link">
-                    <i class="fas fa-chart-pie"></i> <span>Financial Report</span>
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Financial Report</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -144,17 +173,20 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <li class="nav-category">Settings</li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>settings/clinic_settings.php" class="nav-link">
-                    <i class="fas fa-building"></i> <span>Clinic Settings</span>
+                    <i class="fas fa-building"></i>
+                    <span>Clinic Settings</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>settings/profile.php" class="nav-link">
-                    <i class="fas fa-user-circle"></i> <span>Profile</span>
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>settings/users.php" class="nav-link">
-                    <i class="fas fa-users-cog"></i> <span>Users</span>
+                    <i class="fas fa-users-cog"></i>
+                    <span>Users</span>
                 </a>
             </li>
             <li class="nav-divider"></li>
@@ -162,20 +194,30 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
             <!-- Logout -->
             <li class="nav-item">
                 <a href="<?php echo $base_url; ?>logout.php" class="nav-link">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
                 </a>
             </li>
         </ul>
     </nav>
 
     <div class="sidebar-footer">
-        <div class="system-status"><i class="fas fa-shield-alt"></i><span>Secure Connection</span></div>
-        <div class="version"><i class="fas fa-code-branch"></i><span>v3.0.0</span></div>
+        <div class="system-status">
+            <i class="fas fa-shield-alt"></i>
+            <span>Secure Connection</span>
+        </div>
+        <div class="version">
+            <i class="fas fa-code-branch"></i>
+            <span>v3.0.0</span>
+        </div>
     </div>
 </aside>
 
 <style>
-/* Sidebar Styles */
+/* ============================================ */
+/* SIDEBAR STYLES - Modern & Professional */
+/* ============================================ */
+
 .sidebar {
     width: 280px;
     background: linear-gradient(165deg, #0a0f1c 0%, #0f1622 50%, #131a2a 100%);
@@ -189,51 +231,85 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
     display: flex;
     flex-direction: column;
     box-shadow: 4px 0 25px rgba(0,0,0,0.15);
-    border-right: 1px solid rgba(10,132,255,0.15);
+    border-right: 1px solid rgba(10,132,255,0.2);
+    transition: all 0.3s ease;
 }
 
-/* Scrollbar */
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
-.sidebar::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #0A84FF, #34C759); border-radius: 4px; }
+/* Custom Scrollbar */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #0A84FF, #34C759);
+    border-radius: 4px;
+}
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #34C759, #0A84FF);
+}
 
-/* Logo */
+/* Logo Section */
 .sidebar-logo {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 32px 24px;
-    border-bottom: 1px solid rgba(10,132,255,0.15);
+    border-bottom: 1px solid rgba(10,132,255,0.2);
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
 }
 .logo-icon i {
-    font-size: 32px;
+    font-size: 34px;
     background: linear-gradient(135deg, #0A84FF, #34C759);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(10,132,255,0.3));
+    filter: drop-shadow(0 2px 6px rgba(10,132,255,0.4));
+    transition: transform 0.3s ease;
+}
+.sidebar-logo:hover .logo-icon i {
+    transform: scale(1.05);
+}
+.logo-text {
+    display: flex;
+    flex-direction: column;
 }
 .clinic-name {
     font-size: 22px;
     font-weight: 800;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
     background: linear-gradient(135deg, #ffffff, #0A84FF);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    letter-spacing: 0.5px;
 }
-.clinic-sub { font-size: 10px; color: rgba(255,255,255,0.5); letter-spacing: 1px; margin-top: 2px; }
+.clinic-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
 
-/* User Profile */
+/* User Profile Section */
 .sidebar-user {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 14px 18px;
-    background: linear-gradient(135deg, rgba(10,132,255,0.12), rgba(52,199,89,0.06));
+    background: linear-gradient(135deg, rgba(10,132,255,0.15), rgba(52,199,89,0.08));
     margin: 16px;
     border-radius: 60px;
-    border: 1px solid rgba(10,132,255,0.25);
+    border: 1px solid rgba(10,132,255,0.3);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.sidebar-user:hover {
+    background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(52,199,89,0.12));
+    border-color: rgba(10,132,255,0.5);
 }
 .user-avatar {
     width: 44px;
@@ -247,16 +323,54 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
     font-size: 18px;
     color: white;
     box-shadow: 0 4px 12px rgba(10,132,255,0.3);
+    transition: transform 0.3s ease;
 }
-.user-name { font-size: 15px; font-weight: 700; color: #ffffff; }
-.user-role { font-size: 11px; color: #0A84FF; font-weight: 600; }
-.logout-icon { color: rgba(255,255,255,0.6); font-size: 18px; transition: 0.2s; }
-.logout-icon:hover { color: #FF3B30; transform: scale(1.1); }
+.sidebar-user:hover .user-avatar {
+    transform: scale(1.05);
+}
+.user-details {
+    flex: 1;
+}
+.user-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+}
+.user-role {
+    font-size: 11px;
+    color: #0A84FF;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.logout-icon {
+    color: rgba(255,255,255,0.6);
+    font-size: 18px;
+    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.logout-icon:hover {
+    color: #FF3B30;
+    background: rgba(255,59,48,0.15);
+    transform: scale(1.1);
+}
 
 /* Navigation */
-.sidebar-nav { flex: 1; padding: 8px 12px; }
-.nav-menu { list-style: none; }
-.nav-item { margin-bottom: 4px; }
+.sidebar-nav {
+    flex: 1;
+    padding: 8px 12px;
+}
+.nav-menu {
+    list-style: none;
+}
+.nav-item {
+    margin-bottom: 4px;
+}
 .nav-link {
     display: flex;
     align-items: center;
@@ -265,13 +379,52 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
     color: rgba(255,255,255,0.7);
     text-decoration: none;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 14px;
     font-weight: 500;
+    position: relative;
+    overflow: hidden;
 }
-.nav-link i { width: 22px; font-size: 16px; }
-.nav-link:hover { background: rgba(10,132,255,0.15); color: #0A84FF; transform: translateX(4px); }
-.nav-link.active { background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(52,199,89,0.08)); color: #0A84FF; border-left: 3px solid #0A84FF; }
+.nav-link::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(10,132,255,0.15), transparent);
+    transition: width 0.3s ease;
+}
+.nav-link:hover::before {
+    width: 100%;
+}
+.nav-link i {
+    width: 22px;
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+    transition: all 0.2s;
+    position: relative;
+    z-index: 1;
+}
+.nav-link span {
+    position: relative;
+    z-index: 1;
+}
+.nav-link:hover {
+    color: #0A84FF;
+    transform: translateX(4px);
+}
+.nav-link:hover i {
+    color: #0A84FF;
+}
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(10,132,255,0.2), rgba(52,199,89,0.1));
+    color: #0A84FF;
+    border-left: 3px solid #0A84FF;
+}
+.nav-link.active i {
+    color: #0A84FF;
+}
 .nav-divider {
     height: 1px;
     background: linear-gradient(90deg, rgba(10,132,255,0.3), transparent);
@@ -287,24 +440,76 @@ $user_avatar = strtoupper(substr($user_name, 0, 1));
     font-weight: 700;
 }
 
-/* Footer */
+/* Sidebar Footer */
 .sidebar-footer {
     padding: 16px 20px;
-    border-top: 1px solid rgba(10,132,255,0.1);
+    border-top: 1px solid rgba(10,132,255,0.15);
     font-size: 11px;
     display: flex;
     justify-content: space-between;
     color: rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.2);
 }
-.system-status i { color: #34C759; margin-right: 6px; }
-.version i { margin-right: 6px; }
+.system-status i, .version i {
+    margin-right: 6px;
+}
+.system-status i {
+    color: #34C759;
+}
+.version i {
+    color: #0A84FF;
+}
 
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 1024px) {
-    .sidebar { width: 80px; }
-    .logo-text, .user-details, .nav-link span, .nav-category, .sidebar-footer span { display: none; }
-    .sidebar-user { justify-content: center; padding: 12px; }
-    .nav-link { justify-content: center; padding: 12px; }
-    .sidebar-logo { justify-content: center; }
+    .sidebar {
+        width: 80px;
+    }
+    .logo-text, .user-details, .nav-link span, .nav-category, .sidebar-footer span {
+        display: none;
+    }
+    .sidebar-user {
+        justify-content: center;
+        padding: 12px;
+        margin: 12px;
+    }
+    .nav-link {
+        justify-content: center;
+        padding: 12px;
+    }
+    .nav-link i {
+        margin: 0;
+        font-size: 18px;
+    }
+    .sidebar-logo {
+        justify-content: center;
+        padding: 24px 12px;
+    }
+    .logo-icon i {
+        font-size: 28px;
+    }
+    .sidebar-footer {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 260px;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    .logo-text, .user-details, .nav-link span, .nav-category, .sidebar-footer span {
+        display: flex;
+    }
+    .sidebar-user {
+        justify-content: space-between;
+        margin: 16px;
+    }
+    .nav-link {
+        justify-content: flex-start;
+    }
 }
 </style>
